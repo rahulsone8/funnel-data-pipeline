@@ -1,0 +1,209 @@
+import pandas as pd
+import os
+import glob
+from sqlalchemy import create_engine
+
+print("Starting ETL pipeline...")
+
+# --------------------------------------------------
+# 1. Load Latest Funnel File
+# --------------------------------------------------
+
+files = glob.glob("data/raw/funnelanalysis*.csv")
+
+if not files:
+    raise FileNotFoundError("No funnelanalysis CSV file found")
+
+latest_file = max(files, key=os.path.getctime)
+
+print("Using funnel file:", latest_file)
+
+events = pd.read_csv(latest_file)
+shops = pd.read_csv("data/raw/shops.csv")
+orders = pd.read_csv("data/raw/data.csv")
+
+print("Files loaded successfully")
+
+# --------------------------------------------------
+# 2. Filter Important Funnel Actions
+# --------------------------------------------------
+
+valid_actions = [
+    "CHECKOUT",
+    "ORDER",
+    "PDP",
+    "PLP",
+    "VIEW_CART"
+]
+
+events = events[events["Action"].isin(valid_actions)]
+
+print("Filtered important actions")
+
+# --------------------------------------------------
+# 3. Convert Timestamp → Date & Time
+# --------------------------------------------------
+
+events["Timestamp"] = pd.to_datetime(
+    events["Timestamp"],
+    format="mixed",
+    errors="coerce"
+)
+
+events["date"] = events["Timestamp"].dt.date
+events["time"] = events["Timestamp"].dt.strftime("%H:%M:%S")
+
+print("Timestamp split into date and time")
+
+# --------------------------------------------------
+# 4. Join Shop Mapping
+# --------------------------------------------------
+
+events = events.merge(
+    shops,
+    left_on="Shop ID",
+    right_on="GFID",
+    how="left"
+)
+
+events = events.dropna(subset=["Store name"])
+
+print("Shop mapping joined")
+
+# Fix customer number format
+events["Customer Number"] = events["Customer Number"].astype(str)
+events["Customer Number"] = events["Customer Number"].str.replace(".0", "", regex=False)
+
+# --------------------------------------------------
+# 5. Filter SWYO Orders
+# --------------------------------------------------
+
+orders["Pos_Order_ID"] = orders["Pos_Order_ID"].astype(str)
+
+orders = orders[
+    orders["Pos_Order_ID"].str.startswith("SWYO", na=False)
+]
+
+print("Filtered SWYO orders")
+
+# --------------------------------------------------
+# 6. Join Events with Orders
+# --------------------------------------------------
+
+orders["customer_contact"] = orders["customer_contact"].astype(str)
+
+merged = events.merge(
+    orders,
+    left_on="Customer Number",
+    right_on="customer_contact",
+    how="left"
+)
+
+print("Events and orders joined")
+
+# --------------------------------------------------
+# 7. Create Final Dataset
+# --------------------------------------------------
+
+final_df = merged[
+    [
+        "Action",
+        "date",
+        "time",
+        "Customer Number",
+        "Store name",
+        "Pos_Order_ID",
+        "Delivery_Pincode",
+        "Total_Order_Value",
+        "Item_Name",
+        "customer_name"
+    ]
+]
+
+print("Final dataset created")
+
+# --------------------------------------------------
+# 8. Keep Order Columns Only for ORDER Action
+# --------------------------------------------------
+
+mask = final_df["Action"] != "ORDER"
+
+final_df.loc[mask, "Pos_Order_ID"] = None
+final_df.loc[mask, "Delivery_Pincode"] = None
+final_df.loc[mask, "Total_Order_Value"] = None
+final_df.loc[mask, "Item_Name"] = None
+
+# --------------------------------------------------
+# 9. Rename Columns (Match SQL Table)
+# --------------------------------------------------
+
+final_df = final_df.rename(columns={
+    "Action": "action",
+    "Customer Number": "customer_number",
+    "Store name": "store_name",
+    "Pos_Order_ID": "pos_order_id",
+    "Delivery_Pincode": "delivery_address",
+    "Total_Order_Value": "total_order_value",
+    "Item_Name": "item_name"
+})
+
+# enforce column order
+final_df = final_df[
+    [
+        "action",
+        "date",
+        "time",
+        "customer_number",
+        "store_name",
+        "pos_order_id",
+        "delivery_address",
+        "total_order_value",
+        "item_name",
+        "customer_name"
+    ]
+]
+
+# --------------------------------------------------
+# 10. Remove Duplicates
+# --------------------------------------------------
+
+final_df = final_df.drop_duplicates()
+
+print("Duplicates removed")
+
+# --------------------------------------------------
+# 11. Save Clean Dataset
+# --------------------------------------------------
+
+output_path = "data/processed/final_funnel_dataset.csv"
+
+final_df.to_csv(output_path, index=False)
+
+print("Clean dataset saved:", output_path)
+
+# --------------------------------------------------
+# 12. Insert Data into MySQL
+# --------------------------------------------------
+
+engine = create_engine(
+    "mysql+pymysql://root:Rahul1975@localhost/funnel_pipeline"
+)
+
+final_df.to_sql(
+    name="funnel_data",
+    con=engine,
+    if_exists="append",
+    index=False
+)
+
+print("Data inserted into MySQL successfully")
+
+# --------------------------------------------------
+# 13. Summary
+# --------------------------------------------------
+
+print("\nPipeline Summary")
+print("------------------")
+print("Total rows:", len(final_df))
+print("Unique customers:", final_df["customer_number"].nunique())
+print("Unique stores:", final_df["store_name"].nunique())

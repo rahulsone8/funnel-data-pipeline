@@ -1,0 +1,960 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20261.26.0226.1626                               -->
+<workbook original-version='18.1' source-build='2026.1.0 (20261.26.0226.1626)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <AnimationOnByDefault />
+    <IntuitiveSorting />
+    <IntuitiveSorting_SP2 />
+    <MarkAnimation />
+    <ObjectModelEncapsulateLegacy />
+    <ObjectModelTableType />
+    <SchemaViewerObjectModel />
+    <SheetIdentifierTracking />
+    <SingleValuePerNestSorting />
+    <SortTagCleanup />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource caption='funnel_data (funnel_pipeline)' inline='true' name='federated.0gi0gsg025qh1j130hugk0yr34h3' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='localhost' name='mysql.0vrycw213x0q5610ia3d80qx8gzn'>
+            <connection class='mysql' dbname='funnel_pipeline' odbc-native-protocol='' one-time-sql='' port='3306' server='localhost' source-charset='' username='root' />
+          </named-connection>
+        </named-connections>
+        <relation type='collection'>
+          <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='bill_amount' table='[bill_amount]' type='table' />
+          <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='funnel_data' table='[funnel_data]' type='table' />
+          <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='order_items' table='[order_items]' type='table' />
+        </relation>
+        <cols>
+          <map key='[action]' value='[funnel_data].[action]' />
+          <map key='[amount_paid_by_customer]' value='[bill_amount].[amount_paid_by_customer]' />
+          <map key='[coupon_value]' value='[bill_amount].[coupon_value]' />
+          <map key='[coupons_applied]' value='[bill_amount].[coupons_applied]' />
+          <map key='[customer_contact]' value='[bill_amount].[customer_contact]' />
+          <map key='[customer_name (bill_amount)]' value='[bill_amount].[customer_name]' />
+          <map key='[customer_name]' value='[funnel_data].[customer_name]' />
+          <map key='[customer_number]' value='[funnel_data].[customer_number]' />
+          <map key='[date (order_items)]' value='[order_items].[date]' />
+          <map key='[date]' value='[funnel_data].[date]' />
+          <map key='[delivery_address (order_items)]' value='[order_items].[delivery_address]' />
+          <map key='[delivery_address]' value='[funnel_data].[delivery_address]' />
+          <map key='[delivery_distance]' value='[bill_amount].[delivery_distance]' />
+          <map key='[delivery_type]' value='[bill_amount].[delivery_type]' />
+          <map key='[item_name]' value='[order_items].[item_name]' />
+          <map key='[item_names]' value='[bill_amount].[item_names]' />
+          <map key='[order_id (order_items)]' value='[order_items].[order_id]' />
+          <map key='[order_id]' value='[bill_amount].[order_id]' />
+          <map key='[pos_order_id]' value='[funnel_data].[pos_order_id]' />
+          <map key='[shop_id]' value='[funnel_data].[shop_id]' />
+          <map key='[store_name]' value='[funnel_data].[store_name]' />
+          <map key='[time (order_items)]' value='[order_items].[time]' />
+          <map key='[time]' value='[funnel_data].[time]' />
+          <map key='[total_cart_discount]' value='[bill_amount].[total_cart_discount]' />
+          <map key='[total_convinience_charge]' value='[bill_amount].[total_convinience_charge]' />
+          <map key='[total_delivery_charge]' value='[bill_amount].[total_delivery_charge]' />
+          <map key='[total_item_cost_price]' value='[bill_amount].[total_item_cost_price]' />
+          <map key='[total_item_price_after_discount]' value='[bill_amount].[total_item_price_after_discount]' />
+          <map key='[total_menu_discount]' value='[bill_amount].[total_menu_discount]' />
+          <map key='[total_order_value]' value='[funnel_data].[total_order_value]' />
+          <map key='[total_packing_charge]' value='[bill_amount].[total_packing_charge]' />
+          <map key='[total_tax]' value='[bill_amount].[total_tax]' />
+        </cols>
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>order_id</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[order_id]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>order_id</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>amount_paid_by_customer</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[amount_paid_by_customer]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>amount_paid_by_customer</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>coupons_applied</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[coupons_applied]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>coupons_applied</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>coupon_value</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[coupon_value]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>coupon_value</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_item_cost_price</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_item_cost_price]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_item_cost_price</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_item_price_after_discount</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_item_price_after_discount]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_item_price_after_discount</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_menu_discount</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_menu_discount]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_menu_discount</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_cart_discount</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_cart_discount]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_cart_discount</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_packing_charge</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_packing_charge]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_packing_charge</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_delivery_charge</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_delivery_charge]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_delivery_charge</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_convinience_charge</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_convinience_charge]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_convinience_charge</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_tax</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_tax]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>total_tax</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>customer_name</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[customer_name (bill_amount)]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>customer_name</remote-alias>
+            <ordinal>13</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>255</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>customer_contact</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[customer_contact]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>customer_contact</remote-alias>
+            <ordinal>14</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>delivery_type</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[delivery_type]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>delivery_type</remote-alias>
+            <ordinal>15</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>item_names</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[item_names]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>item_names</remote-alias>
+            <ordinal>16</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>500</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>delivery_distance</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[delivery_distance]</local-name>
+            <parent-name>[bill_amount]</parent-name>
+            <remote-alias>delivery_distance</remote-alias>
+            <ordinal>17</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>action</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[action]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>action</remote-alias>
+            <ordinal>19</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>date</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[date]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>date</remote-alias>
+            <ordinal>20</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>time</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[time]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>time</remote-alias>
+            <ordinal>21</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>customer_number</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[customer_number]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>customer_number</remote-alias>
+            <ordinal>22</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>store_name</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[store_name]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>store_name</remote-alias>
+            <ordinal>23</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>255</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>shop_id</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[shop_id]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>shop_id</remote-alias>
+            <ordinal>24</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>pos_order_id</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[pos_order_id]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>pos_order_id</remote-alias>
+            <ordinal>25</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>delivery_address</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[delivery_address]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>delivery_address</remote-alias>
+            <ordinal>26</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_order_value</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[total_order_value]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>total_order_value</remote-alias>
+            <ordinal>27</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>customer_name</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[customer_name]</local-name>
+            <parent-name>[funnel_data]</parent-name>
+            <remote-alias>customer_name</remote-alias>
+            <ordinal>28</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>255</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[funnel_data_2C37EA96D17249B6BD345543B6887B71]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>order_id</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[order_id (order_items)]</local-name>
+            <parent-name>[order_items]</parent-name>
+            <remote-alias>order_id</remote-alias>
+            <ordinal>30</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>50</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[order_items_5C8563C91CE74425991CA69E025C9B8F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>item_name</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[item_name]</local-name>
+            <parent-name>[order_items]</parent-name>
+            <remote-alias>item_name</remote-alias>
+            <ordinal>31</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>500</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[order_items_5C8563C91CE74425991CA69E025C9B8F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>delivery_address</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[delivery_address (order_items)]</local-name>
+            <parent-name>[order_items]</parent-name>
+            <remote-alias>delivery_address</remote-alias>
+            <ordinal>32</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[order_items_5C8563C91CE74425991CA69E025C9B8F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>date</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[date (order_items)]</local-name>
+            <parent-name>[order_items]</parent-name>
+            <remote-alias>date</remote-alias>
+            <ordinal>33</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[order_items_5C8563C91CE74425991CA69E025C9B8F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>time</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[time (order_items)]</local-name>
+            <parent-name>[order_items]</parent-name>
+            <remote-alias>time</remote-alias>
+            <ordinal>34</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>20</width>
+            <contains-null>true</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[order_items_5C8563C91CE74425991CA69E025C9B8F]</object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='Calculation1' datatype='real' name='[Calculation_0092131960659968]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='COUNTD([customer_number]) /&#10;LOOKUP(COUNTD([customer_number]), -1)'>
+          <table-calc ordering-type='Rows' />
+        </calculation>
+      </column>
+      <column caption='bill_amount' datatype='table' name='[__tableau_internal_object_id__].[bill_amount_D49F6AFD3FB4428B989C207F44EEF194]' role='measure' type='quantitative' />
+      <column caption='funnel_data' datatype='table' name='[__tableau_internal_object_id__].[funnel_data_2C37EA96D17249B6BD345543B6887B71]' role='measure' type='quantitative' />
+      <column caption='order_items' datatype='table' name='[__tableau_internal_object_id__].[order_items_5C8563C91CE74425991CA69E025C9B8F]' role='measure' type='quantitative' />
+      <column caption='Action' datatype='string' name='[action]' role='dimension' type='nominal' />
+      <column caption='Amount Paid By Customer' datatype='real' name='[amount_paid_by_customer]' role='measure' type='quantitative' />
+      <column caption='Coupon Value' datatype='real' name='[coupon_value]' role='measure' type='quantitative' />
+      <column caption='Coupons Applied' datatype='string' name='[coupons_applied]' role='dimension' type='nominal' />
+      <column caption='Customer Contact' datatype='string' name='[customer_contact]' role='dimension' type='nominal' />
+      <column caption='Customer Name (Bill Amount)' datatype='string' name='[customer_name (bill_amount)]' role='dimension' type='nominal' />
+      <column caption='Customer Name' datatype='string' name='[customer_name]' role='dimension' type='nominal' />
+      <column caption='Customer Number' datatype='string' name='[customer_number]' role='dimension' type='nominal' />
+      <column caption='Date (Order Items)' datatype='string' name='[date (order_items)]' role='dimension' type='nominal' />
+      <column caption='Date' datatype='string' name='[date]' role='dimension' type='nominal' />
+      <column caption='Delivery Address (Order Items)' datatype='string' name='[delivery_address (order_items)]' role='dimension' type='nominal' />
+      <column caption='Delivery Address' datatype='string' name='[delivery_address]' role='dimension' type='nominal' />
+      <column caption='Delivery Distance' datatype='real' name='[delivery_distance]' role='measure' type='quantitative' />
+      <column caption='Delivery Type' datatype='string' name='[delivery_type]' role='dimension' type='nominal' />
+      <column caption='Item Name' datatype='string' name='[item_name]' role='dimension' type='nominal' />
+      <column caption='Item Names' datatype='string' name='[item_names]' role='dimension' type='nominal' />
+      <column caption='Order Id (Order Items)' datatype='string' name='[order_id (order_items)]' role='dimension' type='nominal' />
+      <column caption='Order Id' datatype='string' name='[order_id]' role='dimension' type='nominal' />
+      <column caption='Pos Order Id' datatype='string' name='[pos_order_id]' role='dimension' type='nominal' />
+      <column caption='Store Name' datatype='string' name='[store_name]' role='dimension' type='nominal' />
+      <column caption='Time (Order Items)' datatype='string' name='[time (order_items)]' role='dimension' type='nominal' />
+      <column caption='Time' datatype='string' name='[time]' role='dimension' type='nominal' />
+      <column caption='Total Cart Discount' datatype='real' name='[total_cart_discount]' role='measure' type='quantitative' />
+      <column caption='Total Convinience Charge' datatype='real' name='[total_convinience_charge]' role='measure' type='quantitative' />
+      <column caption='Total Delivery Charge' datatype='real' name='[total_delivery_charge]' role='measure' type='quantitative' />
+      <column caption='Total Item Cost Price' datatype='real' name='[total_item_cost_price]' role='measure' type='quantitative' />
+      <column caption='Total Item Price After Discount' datatype='real' name='[total_item_price_after_discount]' role='measure' type='quantitative' />
+      <column caption='Total Menu Discount' datatype='real' name='[total_menu_discount]' role='measure' type='quantitative' />
+      <column caption='Total Order Value' datatype='real' name='[total_order_value]' role='measure' type='quantitative' />
+      <column caption='Total Packing Charge' datatype='real' name='[total_packing_charge]' role='measure' type='quantitative' />
+      <column caption='Total Tax' datatype='real' name='[total_tax]' role='measure' type='quantitative' />
+      <layout dim-ordering='alphabetic' measure-ordering='alphabetic' rowDisplayCount='100' show-structure='true' />
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;India&quot;' />
+      </semantic-values>
+      <object-graph>
+        <objects>
+          <object caption='bill_amount' id='bill_amount_D49F6AFD3FB4428B989C207F44EEF194'>
+            <properties context=''>
+              <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='bill_amount' table='[bill_amount]' type='table' />
+            </properties>
+          </object>
+          <object caption='funnel_data' id='funnel_data_2C37EA96D17249B6BD345543B6887B71'>
+            <properties context=''>
+              <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='funnel_data' table='[funnel_data]' type='table' />
+            </properties>
+          </object>
+          <object caption='order_items' id='order_items_5C8563C91CE74425991CA69E025C9B8F'>
+            <properties context=''>
+              <relation connection='mysql.0vrycw213x0q5610ia3d80qx8gzn' name='order_items' table='[order_items]' type='table' />
+            </properties>
+          </object>
+        </objects>
+        <relationships>
+          <relationship>
+            <expression op='='>
+              <expression op='[customer_name (bill_amount)]' />
+              <expression op='[customer_name]' />
+            </expression>
+            <first-end-point object-id='bill_amount_D49F6AFD3FB4428B989C207F44EEF194' />
+            <second-end-point object-id='funnel_data_2C37EA96D17249B6BD345543B6887B71' />
+          </relationship>
+          <relationship>
+            <expression op='='>
+              <expression op='[order_id]' />
+              <expression op='[order_id (order_items)]' />
+            </expression>
+            <first-end-point object-id='bill_amount_D49F6AFD3FB4428B989C207F44EEF194' />
+            <second-end-point object-id='order_items_5C8563C91CE74425991CA69E025C9B8F' />
+          </relationship>
+        </relationships>
+      </object-graph>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 2'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='funnel_data (funnel_pipeline)' name='federated.0gi0gsg025qh1j130hugk0yr34h3' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0gi0gsg025qh1j130hugk0yr34h3'>
+            <column caption='Calculation1' datatype='real' name='[Calculation_0092131960659968]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='COUNTD([customer_number]) /&#10;LOOKUP(COUNTD([customer_number]), -1)'>
+                <table-calc ordering-type='Rows' />
+              </calculation>
+            </column>
+            <column caption='Action' datatype='string' name='[action]' role='dimension' type='nominal' />
+            <column-instance column='[customer_number]' derivation='CountD' name='[ctd:customer_number:qk]' pivot='key' type='quantitative' />
+            <column caption='Customer Number' datatype='string' name='[customer_number]' role='dimension' type='nominal' />
+            <column-instance column='[action]' derivation='None' name='[none:action:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_0092131960659968]' derivation='User' name='[usr:Calculation_0092131960659968:qk]' pivot='key' type='quantitative'>
+              <table-calc ordering-type='Rows' />
+            </column-instance>
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='label'>
+            <format attr='text-format' field='[federated.0gi0gsg025qh1j130hugk0yr34h3].[usr:Calculation_0092131960659968:qk]' value='p0.00%' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <color column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk]' />
+              <text column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[usr:Calculation_0092131960659968:qk]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='true' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.0gi0gsg025qh1j130hugk0yr34h3].[ctd:customer_number:qk]</rows>
+        <cols>[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk]</cols>
+      </table>
+      <simple-id uuid='{F3616753-7920-4658-963B-9B3AFADCE376}' />
+    </worksheet>
+    <worksheet name='Sheet 3'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='funnel_data (funnel_pipeline)' name='federated.0gi0gsg025qh1j130hugk0yr34h3' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0gi0gsg025qh1j130hugk0yr34h3'>
+            <column caption='Action' datatype='string' name='[action]' role='dimension' type='nominal' />
+            <column caption='Date' datatype='string' name='[date]' role='dimension' type='nominal' />
+            <column-instance column='[action]' derivation='None' name='[none:action:nk]' pivot='key' type='nominal' />
+            <column-instance column='[store_name]' derivation='None' name='[none:store_name:nk]' pivot='key' type='nominal' />
+            <column caption='Store Name' datatype='string' name='[store_name]' role='dimension' type='nominal' />
+            <column-instance column='[date]' derivation='Day-Trunc' name='[tdy:date:ok]' pivot='key' type='ordinal' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk]'>
+            <groupfilter function='level-members' level='[none:action:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <alphabetic-sort column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]' direction='ASC' />
+          <filter class='categorical' column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[tdy:date:ok]'>
+            <groupfilter function='level-members' level='[tdy:date:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <slices>
+            <column>[federated.0gi0gsg025qh1j130hugk0yr34h3].[tdy:date:ok]</column>
+            <column>[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='header'>
+            <format attr='width' field='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]' value='204' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]</rows>
+        <cols>([federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk] / [federated.0gi0gsg025qh1j130hugk0yr34h3].[tdy:date:ok])</cols>
+      </table>
+      <simple-id uuid='{91F2FFF0-72D3-4F1F-B1A6-F06189B3BFD3}' />
+    </worksheet>
+    <worksheet name='Sheet 4'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='funnel_data (funnel_pipeline)' name='federated.0gi0gsg025qh1j130hugk0yr34h3' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0gi0gsg025qh1j130hugk0yr34h3'>
+            <column caption='Action' datatype='string' name='[action]' role='dimension' type='nominal' />
+            <column caption='Date' datatype='string' name='[date]' role='dimension' type='nominal' />
+            <column-instance column='[action]' derivation='None' name='[none:action:nk]' pivot='key' type='nominal' />
+            <column-instance column='[date]' derivation='None' name='[none:date:nk]' pivot='key' type='nominal' />
+            <column-instance column='[store_name]' derivation='None' name='[none:store_name:nk]' pivot='key' type='nominal' />
+            <column caption='Store Name' datatype='string' name='[store_name]' role='dimension' type='nominal' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:date:nk]'>
+            <groupfilter function='level-members' level='[none:date:nk]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+          </filter>
+          <single-value-per-nest-shelf-sorts>
+            <single-value-per-nest-shelf-sort dimension-to-sort='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]' direction='ASC' is-on-innermost-dimension='true' measure-to-sort-by='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]' shelf='rows' />
+          </single-value-per-nest-shelf-sorts>
+          <slices>
+            <column>[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:date:nk]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='header'>
+            <format attr='width' field='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]' value='132' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:store_name:nk]</rows>
+        <cols>([federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk] / [federated.0gi0gsg025qh1j130hugk0yr34h3].[none:date:nk])</cols>
+      </table>
+      <simple-id uuid='{41149C16-0F36-41CD-B077-1C97F79232C7}' />
+    </worksheet>
+  </worksheets>
+  <windows source-height='30'>
+    <window class='worksheet' name='Sheet 2'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='0' param='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:action:nk]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{085BECFB-68BF-436B-8556-4CB56858F3C0}' />
+    </window>
+    <window class='worksheet' name='Sheet 3'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{18A5F831-D373-4E2D-AA00-73EAD112E74B}' />
+    </window>
+    <window class='worksheet' maximized='true' name='Sheet 4'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card param='[federated.0gi0gsg025qh1j130hugk0yr34h3].[none:date:nk]' type='filter' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{E7BEB3E4-E7A5-447D-A495-2AF7BC0F1211}' />
+    </window>
+  </windows>
+</workbook>

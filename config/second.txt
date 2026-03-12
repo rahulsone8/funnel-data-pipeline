@@ -1,0 +1,331 @@
+import pandas as pd
+import glob
+import os
+import shutil
+import logging
+from sqlalchemy import create_engine
+
+# --------------------------------------------------
+# 1. Setup Logging
+# --------------------------------------------------
+
+os.makedirs("logs", exist_ok=True)
+
+logging.basicConfig(
+    filename="logs/pipeline.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logging.info("Pipeline started")
+
+# --------------------------------------------------
+# 2. Ensure Required Folders Exist
+# --------------------------------------------------
+
+os.makedirs("data/archive", exist_ok=True)
+os.makedirs("data/processed", exist_ok=True)
+
+# --------------------------------------------------
+# 3. MySQL Connection
+# --------------------------------------------------
+
+engine = create_engine(
+    "mysql+pymysql://root:Rahul1975@localhost/funnel_pipeline"
+)
+
+logging.info("MySQL connection established")
+
+# --------------------------------------------------
+# 4. Load Funnel Files
+# --------------------------------------------------
+
+funnel_files = glob.glob("data/raw/funnelanalysis*.csv")
+
+if not funnel_files:
+    logging.info("No funnel files found. Pipeline stopped.")
+    exit()
+
+events_list = []
+
+for file in funnel_files:
+    df = pd.read_csv(file)
+    events_list.append(df)
+
+events = pd.concat(events_list, ignore_index=True)
+
+logging.info(f"Funnel files loaded: {len(funnel_files)}")
+
+# --------------------------------------------------
+# 5. Load Order Files
+# --------------------------------------------------
+
+order_files = glob.glob("data/raw/data*.csv")
+
+orders_list = []
+
+for file in order_files:
+    df = pd.read_csv(file)
+    orders_list.append(df)
+
+orders = pd.concat(orders_list, ignore_index=True)
+
+logging.info(f"Order files loaded: {len(order_files)}")
+
+# --------------------------------------------------
+# 6. Load Shop Mapping
+# --------------------------------------------------
+
+shops = pd.read_csv("data/raw/shops.csv")
+
+logging.info("Shop mapping file loaded")
+
+# --------------------------------------------------
+# 7. Remove Raw Duplicates
+# --------------------------------------------------
+
+events = events.drop_duplicates()
+orders = orders.drop_duplicates()
+
+logging.info("Raw duplicates removed")
+
+# --------------------------------------------------
+# 8. Filter Important Actions
+# --------------------------------------------------
+
+valid_actions = [
+    "CHECKOUT",
+    "ORDER",
+    "PDP",
+    "PLP",
+    "VIEW_CART"
+]
+
+events = events[events["Action"].isin(valid_actions)]
+
+logging.info("Filtered funnel actions")
+
+# --------------------------------------------------
+# 9. Convert Timestamp
+# --------------------------------------------------
+
+events["Timestamp"] = pd.to_datetime(
+    events["Timestamp"],
+    format="mixed",
+    errors="coerce"
+)
+
+events["date"] = events["Timestamp"].dt.date
+events["time"] = events["Timestamp"].dt.strftime("%H:%M:%S")
+
+logging.info("Timestamp converted")
+
+# --------------------------------------------------
+# 10. Join Shops
+# --------------------------------------------------
+
+events = events.merge(
+    shops,
+    left_on="Shop ID",
+    right_on="GFID",
+    how="left"
+)
+
+events = events.dropna(subset=["Store name"])
+
+logging.info("Shop mapping joined")
+
+# --------------------------------------------------
+# 11. Clean Customer Numbers
+# --------------------------------------------------
+
+events["Customer Number"] = events["Customer Number"].astype(str)
+events["Customer Number"] = events["Customer Number"].str.replace(".0","",regex=False)
+
+# --------------------------------------------------
+# 12. Filter SWYO Orders
+# --------------------------------------------------
+
+orders["Pos_Order_ID"] = orders["Pos_Order_ID"].astype(str)
+
+orders = orders[
+    orders["Pos_Order_ID"].str.startswith("SWYO", na=False)
+]
+
+logging.info("Filtered SWYO orders")
+
+# --------------------------------------------------
+# 13. Join Events + Orders
+# --------------------------------------------------
+
+orders["customer_contact"] = orders["customer_contact"].astype(str)
+
+merged = events.merge(
+    orders,
+    left_on="Customer Number",
+    right_on="customer_contact",
+    how="left"
+)
+
+logging.info("Events joined with orders")
+
+# --------------------------------------------------
+# 14. Create Final Dataset
+# --------------------------------------------------
+
+final_df = merged[
+    [
+        "Action",
+        "date",
+        "time",
+        "Customer Number",
+        "Store name",
+        "Pos_Order_ID",
+        "Delivery_Pincode",
+        "Total_Order_Value",
+        "Item_Name",
+        "customer_name"
+    ]
+]
+
+logging.info("Final dataset created")
+
+# --------------------------------------------------
+# 15. Keep Order Data Only for ORDER
+# --------------------------------------------------
+
+mask = final_df["Action"] != "ORDER"
+
+final_df.loc[mask,"Pos_Order_ID"] = None
+final_df.loc[mask,"Delivery_Pincode"] = None
+final_df.loc[mask,"Total_Order_Value"] = None
+final_df.loc[mask,"Item_Name"] = None
+
+# --------------------------------------------------
+# 16. Rename Columns
+# --------------------------------------------------
+
+final_df = final_df.rename(columns={
+    "Action":"action",
+    "Customer Number":"customer_number",
+    "Store name":"store_name",
+    "Pos_Order_ID":"pos_order_id",
+    "Delivery_Pincode":"delivery_address",
+    "Total_Order_Value":"total_order_value",
+    "Item_Name":"item_name"
+})
+
+final_df = final_df[
+[
+"action",
+"date",
+"time",
+"customer_number",
+"store_name",
+"pos_order_id",
+"delivery_address",
+"total_order_value",
+"item_name",
+"customer_name"
+]
+]
+
+# --------------------------------------------------
+# 17. Remove Duplicates
+# --------------------------------------------------
+
+final_df = final_df.drop_duplicates()
+
+logging.info("Final duplicates removed")
+
+# --------------------------------------------------
+# 18. Incremental Loading
+# --------------------------------------------------
+
+query = """
+SELECT MAX(CONCAT(date,' ',time)) AS last_timestamp
+FROM funnel_data
+"""
+
+last_timestamp_df = pd.read_sql(query, engine)
+
+last_timestamp = last_timestamp_df.iloc[0]["last_timestamp"]
+
+final_df["event_datetime"] = pd.to_datetime(
+    final_df["date"].astype(str) + " " + final_df["time"]
+)
+
+if last_timestamp is not None:
+    
+    final_df = final_df[
+        final_df["event_datetime"] > pd.to_datetime(last_timestamp)
+    ]
+
+final_df = final_df.drop(columns=["event_datetime"])
+
+logging.info(f"New rows detected: {len(final_df)}")
+
+# --------------------------------------------------
+# 19. Save Processed Dataset
+# --------------------------------------------------
+
+output_file = "data/processed/final_funnel_dataset.csv"
+
+final_df.to_csv(
+    output_file,
+    index=False
+)
+
+logging.info("Processed dataset saved")
+
+# --------------------------------------------------
+# 20. Insert into MySQL
+# --------------------------------------------------
+
+if len(final_df) > 0:
+
+    final_df.to_sql(
+        name="funnel_data",
+        con=engine,
+        if_exists="append",
+        index=False
+    )
+
+    logging.info("Data inserted into MySQL")
+
+else:
+
+    logging.info("No new rows inserted")
+
+# --------------------------------------------------
+# 21. Archive Funnel Files
+# --------------------------------------------------
+
+for file in funnel_files:
+
+    filename = os.path.basename(file)
+    archive_path = f"data/archive/{filename}"
+
+    shutil.move(file, archive_path)
+
+logging.info("Funnel files archived")
+
+# --------------------------------------------------
+# 22. Archive Order Files
+# --------------------------------------------------
+
+for file in order_files:
+
+    filename = os.path.basename(file)
+    archive_path = f"data/archive/{filename}"
+
+    shutil.move(file, archive_path)
+
+logging.info("Order files archived")
+
+# --------------------------------------------------
+# 23. Pipeline Finished
+# --------------------------------------------------
+
+logging.info("Pipeline finished successfully")
+print("Pipeline completed successfully")

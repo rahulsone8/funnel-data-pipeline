@@ -1,0 +1,384 @@
+import pandas as pd
+import glob
+import os
+import shutil
+import logging
+from sqlalchemy import create_engine
+
+# --------------------------------------------------
+# 1. Setup Logging
+# --------------------------------------------------
+
+os.makedirs("logs", exist_ok=True)
+
+logging.basicConfig(
+    filename="logs/pipeline.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logging.info("Pipeline started")
+
+# --------------------------------------------------
+# 2. Ensure Folders Exist
+# --------------------------------------------------
+
+os.makedirs("data/archive", exist_ok=True)
+os.makedirs("data/processed", exist_ok=True)
+
+# --------------------------------------------------
+# 3. MySQL Connection
+# --------------------------------------------------
+
+engine = create_engine(
+    "mysql+pymysql://root:Rahul1975@localhost/funnel_pipeline"
+)
+
+# --------------------------------------------------
+# 4. Load Funnel Files
+# --------------------------------------------------
+
+funnel_files = glob.glob("data/raw/funnelanalysis*.csv")
+
+events_list = []
+
+for file in funnel_files:
+    df = pd.read_csv(file)
+    events_list.append(df)
+
+events = pd.concat(events_list, ignore_index=True)
+
+events.columns = events.columns.str.strip()
+
+logging.info(f"Loaded funnel files: {len(funnel_files)}")
+
+# --------------------------------------------------
+# 5. Load Order Files
+# --------------------------------------------------
+
+order_files = glob.glob("data/raw/data*.csv")
+
+orders_list = []
+
+for file in order_files:
+    df = pd.read_csv(file)
+    orders_list.append(df)
+
+orders = pd.concat(orders_list, ignore_index=True)
+
+orders.columns = orders.columns.str.strip()
+
+logging.info(f"Loaded order files: {len(order_files)}")
+
+# --------------------------------------------------
+# 6. Load Monthly Bill Files
+# --------------------------------------------------
+
+bill_files = glob.glob("data/raw/response_*.csv")
+
+bill_list = []
+
+for file in bill_files:
+    df = pd.read_csv(file)
+    bill_list.append(df)
+
+if bill_list:
+    bill_df = pd.concat(bill_list, ignore_index=True)
+    bill_df.columns = bill_df.columns.str.strip()
+else:
+    bill_df = pd.DataFrame()
+
+logging.info(f"Loaded bill files: {len(bill_files)}")
+
+# --------------------------------------------------
+# 7. Load Shops Mapping
+# --------------------------------------------------
+
+shops = pd.read_csv("data/raw/shops.csv")
+
+shops.columns = shops.columns.str.strip()
+
+logging.info("Loaded shop mapping")
+
+# --------------------------------------------------
+# 8. Remove Raw Duplicates
+# --------------------------------------------------
+
+events = events.drop_duplicates()
+orders = orders.drop_duplicates()
+
+# --------------------------------------------------
+# 9. Filter Funnel Actions
+# --------------------------------------------------
+
+valid_actions = [
+    "CHECKOUT",
+    "ORDER",
+    "PDP",
+    "PLP",
+    "VIEW_CART"
+]
+
+events = events[events["Action"].isin(valid_actions)]
+
+# --------------------------------------------------
+# 10. Convert Timestamp
+# --------------------------------------------------
+
+events["Timestamp"] = pd.to_datetime(events["Timestamp"], errors="coerce")
+
+events["date"] = events["Timestamp"].dt.date
+events["time"] = events["Timestamp"].dt.strftime("%H:%M:%S")
+
+# --------------------------------------------------
+# 11. Join Shops (Shop ID → GFID)
+# --------------------------------------------------
+
+events = events.merge(
+    shops,
+    left_on="Shop ID",
+    right_on="GFID",
+    how="left"
+)
+
+logging.info("Shop mapping joined")
+
+# --------------------------------------------------
+# 12. Standardize Store Names
+# --------------------------------------------------
+
+store_name_fix = {
+    "Food Court.": "Mann Food Court",
+    "Food Court": "Mann Food Court"
+}
+
+events["Store name"] = events["Store name"].replace(store_name_fix)
+
+# --------------------------------------------------
+# 13. Detect Unmapped Stores
+# --------------------------------------------------
+
+missing_stores = events[events["Store name"].isna()]
+
+if len(missing_stores) > 0:
+    logging.warning(f"Unmapped stores detected: {len(missing_stores)}")
+
+events = events.dropna(subset=["Store name"])
+
+# --------------------------------------------------
+# 14. Clean Customer Numbers
+# --------------------------------------------------
+
+events["Customer Number"] = events["Customer Number"].astype(str)
+events["Customer Number"] = events["Customer Number"].str.replace(".0","")
+
+# --------------------------------------------------
+# 15. Filter SWYO Orders
+# --------------------------------------------------
+
+orders["Pos_Order_ID"] = orders["Pos_Order_ID"].astype(str)
+
+orders = orders[
+    orders["Pos_Order_ID"].str.startswith("SWYO", na=False)
+]
+
+# --------------------------------------------------
+# 16. Create Order Items Table
+# --------------------------------------------------
+
+orders["Created"] = pd.to_datetime(orders["Created"], errors="coerce")
+
+orders["date"] = orders["Created"].dt.date
+orders["time"] = orders["Created"].dt.strftime("%H:%M:%S")
+
+order_items = orders[
+[
+"Pos_Order_ID",
+"Item_Name",
+"date",
+"time",
+"Delivery_Pincode"
+]
+]
+
+order_items = order_items.rename(columns={
+"Pos_Order_ID":"pos_order_id",
+"Item_Name":"item_name",
+"Delivery_Pincode":"delivery_address"
+})
+
+order_items = order_items.drop_duplicates()
+
+# --------------------------------------------------
+# 17. Create Bill Amount Table
+# --------------------------------------------------
+
+if not bill_df.empty:
+
+    bill_amount = bill_df[
+    [
+    "Order ID",
+    "Amount Paid by Customer",
+    "Coupons Applied",
+    "Coupon Value",
+    "Total Item Cost Price",
+    "Total Item Price After Discount",
+    "Total Menu Discount",
+    "Total Cart Discount",
+    "Total Packing Charge",
+    "Total Delivery Charge",
+    "Total Convinience Charge",
+    "Total Tax",
+    "Customer Name",
+    "Customer Contact",
+    "Delivery Type",
+    "Item Names",
+    "Delivery Distance"
+    ]
+    ]
+
+    bill_amount = bill_amount.rename(columns={
+    "Order ID":"order_id",
+    "Amount Paid by Customer":"amount_paid_by_customer",
+    "Coupons Applied":"coupons_applied",
+    "Coupon Value":"coupon_value",
+    "Total Item Cost Price":"total_item_cost_price",
+    "Total Item Price After Discount":"total_item_price_after_discount",
+    "Total Menu Discount":"total_menu_discount",
+    "Total Cart Discount":"total_cart_discount",
+    "Total Packing Charge":"total_packing_charge",
+    "Total Delivery Charge":"total_delivery_charge",
+    "Total Convinience Charge":"total_convinience_charge",
+    "Total Tax":"total_tax",
+    "Customer Name":"customer_name",
+    "Customer Contact":"customer_contact",
+    "Delivery Type":"delivery_type",
+    "Item Names":"item_names",
+    "Delivery Distance":"delivery_distance"
+    })
+
+    bill_amount = bill_amount.drop_duplicates(subset=["order_id"])
+
+# --------------------------------------------------
+# 18. Join Events + Orders
+# --------------------------------------------------
+
+orders["customer_contact"] = orders["customer_contact"].astype(str)
+
+merged = events.merge(
+    orders,
+    left_on="Customer Number",
+    right_on="customer_contact",
+    how="left"
+)
+
+# --------------------------------------------------
+# 19. Create Funnel Dataset
+# --------------------------------------------------
+
+final_df = merged[
+[
+"Action",
+"date_x",
+"time_x",
+"Customer Number",
+"Store name",
+"GFID",
+"Pos_Order_ID",
+"Delivery_Pincode",
+"Total_Order_Value",
+"customer_name"
+]
+]
+
+final_df = final_df.rename(columns={
+"Action":"action",
+"date_x":"date",
+"time_x":"time",
+"Customer Number":"customer_number",
+"Store name":"store_name",
+"GFID":"shop_id",
+"Pos_Order_ID":"pos_order_id",
+"Delivery_Pincode":"delivery_address",
+"Total_Order_Value":"total_order_value"
+})
+
+# --------------------------------------------------
+# 20. Keep Order Data Only for ORDER
+# --------------------------------------------------
+
+mask = final_df["action"] != "ORDER"
+
+final_df.loc[mask,"pos_order_id"] = None
+final_df.loc[mask,"delivery_address"] = None
+final_df.loc[mask,"total_order_value"] = None
+
+# --------------------------------------------------
+# 21. Ensure Unique Orders
+# --------------------------------------------------
+
+orders_only = final_df[final_df["pos_order_id"].notna()]
+orders_only = orders_only.drop_duplicates(subset=["pos_order_id"])
+
+non_orders = final_df[final_df["pos_order_id"].isna()]
+
+final_df = pd.concat([non_orders, orders_only], ignore_index=True)
+
+final_df = final_df.drop_duplicates()
+
+# --------------------------------------------------
+# 22. Save Processed Files
+# --------------------------------------------------
+
+final_df.to_csv("data/processed/final_funnel_dataset.csv", index=False)
+
+order_items.to_csv("data/processed/order_items_dataset.csv", index=False)
+
+if not bill_df.empty:
+    bill_amount.to_csv("data/processed/bill_amount_dataset.csv", index=False)
+
+# --------------------------------------------------
+# 23. Insert into MySQL
+# --------------------------------------------------
+
+final_df.to_sql("funnel_data", engine, if_exists="append", index=False)
+
+order_items.to_sql("order_items", engine, if_exists="append", index=False)
+
+if not bill_df.empty:
+    bill_amount.to_sql("bill_amount", engine, if_exists="append", index=False)
+
+logging.info("Data inserted into MySQL")
+
+# --------------------------------------------------
+# 24. Create Indexes
+# --------------------------------------------------
+
+with engine.connect() as conn:
+
+    conn.execute("CREATE INDEX idx_pos_order ON funnel_data(pos_order_id)")
+    conn.execute("CREATE INDEX idx_order_items ON order_items(pos_order_id)")
+    conn.execute("CREATE INDEX idx_bill_order ON bill_amount(order_id)")
+
+# --------------------------------------------------
+# 25. Archive Raw Files
+# --------------------------------------------------
+
+for file in funnel_files:
+    shutil.move(file, f"data/archive/{os.path.basename(file)}")
+
+for file in order_files:
+    shutil.move(file, f"data/archive/{os.path.basename(file)}")
+
+for file in bill_files:
+    shutil.move(file, f"data/archive/{os.path.basename(file)}")
+
+logging.info("Raw files archived")
+
+# --------------------------------------------------
+# 26. Finish
+# --------------------------------------------------
+
+logging.info("Pipeline finished successfully")
+
+print("Pipeline completed successfully")

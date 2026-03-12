@@ -1,0 +1,70 @@
+2026-03-12 11:57:55,653 - INFO - Pipeline started
+2026-03-12 11:57:56,093 - INFO - MySQL connection established
+2026-03-12 11:57:56,134 - INFO - Funnel files loaded: 1
+2026-03-12 11:57:56,154 - INFO - Order files loaded: 1
+2026-03-12 11:57:56,155 - INFO - Shop mapping file loaded
+2026-03-12 11:57:56,171 - INFO - Raw duplicates removed
+2026-03-12 11:57:56,172 - INFO - Filtered funnel actions
+2026-03-12 11:57:56,746 - INFO - Timestamp converted
+2026-03-12 11:57:56,753 - INFO - Shop mapping joined
+2026-03-12 11:57:56,758 - INFO - Filtered SWYO orders
+2026-03-12 11:57:56,761 - INFO - Events joined with orders
+2026-03-12 11:57:56,762 - INFO - Final dataset created
+2026-03-12 11:57:56,770 - INFO - Final duplicates removed
+2026-03-12 11:57:57,386 - INFO - New rows detected: 271
+2026-03-12 11:57:57,389 - INFO - Processed dataset saved
+2026-03-12 11:57:57,444 - INFO - Data inserted into MySQL
+2026-03-12 11:57:57,448 - INFO - Funnel files archived
+2026-03-12 11:57:57,448 - INFO - Order files archived
+2026-03-12 11:57:57,448 - INFO - Pipeline finished successfully
+2026-03-12 14:58:17,385 - INFO - Pipeline started
+2026-03-12 14:58:17,404 - INFO - MySQL connection established
+2026-03-12 14:58:17,431 - INFO - Funnel files loaded: 1
+2026-03-12 14:58:17,494 - INFO - Order files loaded: 1
+2026-03-12 14:58:17,498 - INFO - Bill files loaded: 3
+2026-03-12 14:58:17,498 - INFO - Shop mapping file loaded
+2026-03-12 14:58:17,531 - INFO - Raw duplicates removed
+2026-03-12 15:05:07,445 - INFO - Pipeline started
+2026-03-12 15:05:07,492 - INFO - Loaded funnel files: 1
+2026-03-12 15:05:07,555 - INFO - Loaded order files: 1
+2026-03-12 15:05:07,560 - INFO - Loaded bill files: 3
+2026-03-12 15:05:07,561 - INFO - Loaded shop mapping
+2026-03-12 15:05:07,655 - INFO - Shop mapping joined
+2026-03-12 15:05:07,659 - WARNING - Unmapped stores detected: 23195
+2026-03-12 15:17:21,171 - INFO - Pipeline started
+2026-03-12 15:17:21,197 - INFO - Shops mapping loaded
+2026-03-12 15:17:21,218 - INFO - Funnel files loaded: 1
+2026-03-12 15:17:21,294 - INFO - Response files loaded: 3
+2026-03-12 15:17:21,374 - INFO - Processed datasets saved
+2026-03-12 15:18:52,412 - INFO - Pipeline started
+2026-03-12 15:18:52,437 - INFO - Shops mapping loaded
+2026-03-12 15:18:52,457 - INFO - Funnel files loaded: 1
+2026-03-12 15:18:52,532 - INFO - Response files loaded: 3
+2026-03-12 15:18:52,618 - INFO - Processed datasets saved
+2026-03-12 15:18:53,329 - INFO - Data inserted into MySQL
+2026-03-12 15:21:18,889 - INFO - Pipeline started
+2026-03-12 15:21:18,912 - INFO - Shops mapping loaded
+2026-03-12 15:21:18,933 - INFO - Funnel files loaded: 1
+2026-03-12 15:21:19,007 - INFO - Response files loaded: 3
+2026-03-12 15:21:19,091 - INFO - Processed datasets saved
+2026-03-12 15:21:19,700 - INFO - Data inserted into MySQL
+2026-03-12 15:21:29,499 - INFO - Pipeline started
+2026-03-12 15:21:29,525 - INFO - Shops mapping loaded
+2026-03-12 15:21:29,545 - INFO - Funnel files loaded: 1
+2026-03-12 15:21:29,619 - INFO - Response files loaded: 3
+2026-03-12 15:21:29,698 - INFO - Processed datasets saved
+2026-03-12 15:21:30,445 - INFO - Data inserted into MySQL
+2026-03-12 15:25:33,641 - INFO - Pipeline started
+2026-03-12 15:29:36,375 - INFO - Pipeline started
+2026-03-12 15:29:42,722 - INFO - Files archived
+2026-03-12 15:29:42,722 - INFO - Pipeline finished
+2026-03-12 15:53:46,510 - INFO - Pipeline started
+2026-03-12 15:53:53,188 - INFO - Files archived
+2026-03-12 15:53:53,188 - INFO - Pipeline finished
+2026-03-12 15:58:14,005 - INFO - Pipeline started
+2026-03-12 15:58:59,207 - INFO - Pipeline started
+2026-03-12 15:59:43,423 - INFO - Pipeline started
+2026-03-12 16:00:38,327 - INFO - Pipeline started
+2026-03-12 16:10:34,617 - INFO - Pipeline started
+2026-03-12 16:20:04,806 - INFO - Pipeline started
+2026-03-12 20:09:07,719 - INFO - Pipeline started

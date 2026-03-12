@@ -1,0 +1,364 @@
+import pandas as pd
+import glob
+import os
+import shutil
+import logging
+from sqlalchemy import create_engine
+
+# --------------------------------------------------
+# 1. Setup Logging
+# --------------------------------------------------
+
+os.makedirs("logs", exist_ok=True)
+
+logging.basicConfig(
+    filename="logs/pipeline.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logging.info("Pipeline started")
+
+# --------------------------------------------------
+# 2. Ensure Required Folders Exist
+# --------------------------------------------------
+
+os.makedirs("data/archive", exist_ok=True)
+os.makedirs("data/processed", exist_ok=True)
+
+# --------------------------------------------------
+# 3. MySQL Connection
+# --------------------------------------------------
+
+engine = create_engine(
+    "mysql+pymysql://root:Rahul1975@localhost/funnel_pipeline"
+)
+
+logging.info("MySQL connection established")
+
+# --------------------------------------------------
+# 4. Load Funnel Files
+# --------------------------------------------------
+
+funnel_files = glob.glob("data/raw/funnelanalysis*.csv")
+
+if not funnel_files:
+    logging.info("No funnel files found. Pipeline stopped.")
+    exit()
+
+events_list = []
+
+for file in funnel_files:
+    df = pd.read_csv(file)
+    events_list.append(df)
+
+events = pd.concat(events_list, ignore_index=True)
+
+logging.info(f"Funnel files loaded: {len(funnel_files)}")
+
+# --------------------------------------------------
+# 5. Load Order Files
+# --------------------------------------------------
+
+order_files = glob.glob("data/raw/data*.csv")
+
+orders_list = []
+
+for file in order_files:
+    df = pd.read_csv(file)
+    orders_list.append(df)
+
+orders = pd.concat(orders_list, ignore_index=True)
+
+logging.info(f"Order files loaded: {len(order_files)}")
+
+# --------------------------------------------------
+# 6. Load Shop Mapping
+# --------------------------------------------------
+
+shops = pd.read_csv("data/raw/shops.csv")
+
+logging.info("Shop mapping file loaded")
+
+# --------------------------------------------------
+# 7. Remove Raw Duplicates
+# --------------------------------------------------
+
+events = events.drop_duplicates()
+orders = orders.drop_duplicates()
+
+logging.info("Raw duplicates removed")
+
+# --------------------------------------------------
+# 8. Filter Important Actions
+# --------------------------------------------------
+
+valid_actions = [
+    "CHECKOUT",
+    "ORDER",
+    "PDP",
+    "PLP",
+    "VIEW_CART"
+]
+
+events = events[events["Action"].isin(valid_actions)]
+
+logging.info("Filtered funnel actions")
+
+# --------------------------------------------------
+# 9. Convert Timestamp
+# --------------------------------------------------
+
+events["Timestamp"] = pd.to_datetime(
+    events["Timestamp"],
+    format="mixed",
+    errors="coerce"
+)
+
+events["date"] = events["Timestamp"].dt.date
+events["time"] = events["Timestamp"].dt.strftime("%H:%M:%S")
+
+logging.info("Timestamp converted")
+
+# --------------------------------------------------
+# 10. Join Shops
+# --------------------------------------------------
+
+events = events.merge(
+    shops,
+    left_on="Shop ID",
+    right_on="GFID",
+    how="left"
+)
+
+events = events.dropna(subset=["Store name"])
+
+logging.info("Shop mapping joined")
+
+# --------------------------------------------------
+# 11. Clean Customer Numbers
+# --------------------------------------------------
+
+events["Customer Number"] = events["Customer Number"].astype(str)
+events["Customer Number"] = events["Customer Number"].str.replace(".0","",regex=False)
+
+# --------------------------------------------------
+# 12. Filter SWYO Orders
+# --------------------------------------------------
+
+orders["Pos_Order_ID"] = orders["Pos_Order_ID"].astype(str)
+
+orders = orders[
+    orders["Pos_Order_ID"].str.startswith("SWYO", na=False)
+]
+
+logging.info("Filtered SWYO orders")
+
+# --------------------------------------------------
+# 13. Create ORDER ITEMS TABLE
+# --------------------------------------------------
+
+orders["Created"] = pd.to_datetime(
+    orders["Created"],
+    errors="coerce"
+)
+
+orders["date"] = orders["Created"].dt.date
+orders["time"] = orders["Created"].dt.strftime("%H:%M:%S")
+
+order_items = orders[
+[
+"Pos_Order_ID",
+"Item_Name",
+"date",
+"time",
+"Delivery_Pincode"
+]
+]
+
+order_items = order_items.rename(columns={
+"Pos_Order_ID":"pos_order_id",
+"Item_Name":"item_name",
+"Delivery_Pincode":"delivery_address"
+})
+
+order_items = order_items.drop_duplicates()
+
+logging.info("Order items dataset created")
+
+# --------------------------------------------------
+# 14. Join Events + Orders
+# --------------------------------------------------
+
+orders["customer_contact"] = orders["customer_contact"].astype(str)
+
+merged = events.merge(
+    orders,
+    left_on="Customer Number",
+    right_on="customer_contact",
+    how="left"
+)
+
+logging.info("Events joined with orders")
+
+# --------------------------------------------------
+# 15. Create Funnel Dataset
+# --------------------------------------------------
+
+final_df = merged[
+[
+"Action",
+"date_x",
+"time_x",
+"Customer Number",
+"Store name",
+"Pos_Order_ID",
+"Delivery_Pincode",
+"Total_Order_Value",
+"customer_name"
+]
+]
+
+final_df = final_df.rename(columns={
+"Action":"action",
+"date_x":"date",
+"time_x":"time",
+"Customer Number":"customer_number",
+"Store name":"store_name",
+"Pos_Order_ID":"pos_order_id",
+"Delivery_Pincode":"delivery_address",
+"Total_Order_Value":"total_order_value"
+})
+
+# --------------------------------------------------
+# 16. Keep Order Data Only for ORDER
+# --------------------------------------------------
+
+mask = final_df["action"] != "ORDER"
+
+final_df.loc[mask,"pos_order_id"] = None
+final_df.loc[mask,"delivery_address"] = None
+final_df.loc[mask,"total_order_value"] = None
+
+# --------------------------------------------------
+# 17. Remove Duplicate Orders
+# --------------------------------------------------
+
+orders_only = final_df[final_df["pos_order_id"].notna()]
+orders_only = orders_only.drop_duplicates(subset=["pos_order_id"])
+
+non_orders = final_df[final_df["pos_order_id"].isna()]
+
+final_df = pd.concat([non_orders, orders_only], ignore_index=True)
+
+logging.info("Duplicate pos_order_id removed")
+
+# --------------------------------------------------
+# 18. Remove Final Duplicates
+# --------------------------------------------------
+
+final_df = final_df.drop_duplicates()
+
+# --------------------------------------------------
+# 19. Incremental Loading
+# --------------------------------------------------
+
+query = """
+SELECT MAX(CONCAT(date,' ',time)) AS last_timestamp
+FROM funnel_data
+"""
+
+try:
+    last_timestamp_df = pd.read_sql(query, engine)
+    last_timestamp = last_timestamp_df.iloc[0]["last_timestamp"]
+
+    final_df["event_datetime"] = pd.to_datetime(
+        final_df["date"].astype(str) + " " + final_df["time"]
+    )
+
+    if last_timestamp is not None:
+
+        final_df = final_df[
+            final_df["event_datetime"] > pd.to_datetime(last_timestamp)
+        ]
+
+    final_df = final_df.drop(columns=["event_datetime"])
+
+except:
+    logging.info("First run - table may not exist")
+
+logging.info(f"New rows detected: {len(final_df)}")
+
+# --------------------------------------------------
+# 20. Save Processed Files
+# --------------------------------------------------
+
+final_df.to_csv(
+"data/processed/final_funnel_dataset.csv",
+index=False
+)
+
+order_items.to_csv(
+"data/processed/order_items_dataset.csv",
+index=False
+)
+
+logging.info("Processed datasets saved")
+
+# --------------------------------------------------
+# 21. Insert Into MySQL
+# --------------------------------------------------
+
+if len(final_df) > 0:
+
+    final_df.to_sql(
+        name="funnel_data",
+        con=engine,
+        if_exists="append",
+        index=False
+    )
+
+    logging.info("Funnel data inserted")
+
+order_items.to_sql(
+    name="order_items",
+    con=engine,
+    if_exists="append",
+    index=False
+)
+
+logging.info("Order items inserted")
+
+# --------------------------------------------------
+# 22. Archive Funnel Files
+# --------------------------------------------------
+
+for file in funnel_files:
+
+    filename = os.path.basename(file)
+    archive_path = f"data/archive/{filename}"
+
+    shutil.move(file, archive_path)
+
+logging.info("Funnel files archived")
+
+# --------------------------------------------------
+# 23. Archive Order Files
+# --------------------------------------------------
+
+for file in order_files:
+
+    filename = os.path.basename(file)
+    archive_path = f"data/archive/{filename}"
+
+    shutil.move(file, archive_path)
+
+logging.info("Order files archived")
+
+# --------------------------------------------------
+# 24. Pipeline Finished
+# --------------------------------------------------
+
+logging.info("Pipeline finished successfully")
+
+print("Pipeline completed successfully")
