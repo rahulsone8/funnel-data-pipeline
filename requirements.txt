@@ -1,0 +1,17 @@
+asgiref==3.11.1
+Django==6.0.3
+et_xmlfile==2.0.0
+kafka==1.3.5
+numpy==2.4.2
+openpyxl==3.1.5
+pandas==3.0.1
+pandasql==0.7.3
+psycopg2-binary==2.9.11
+PyMySQL==1.1.2
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+six==1.17.0
+SQLAlchemy==2.0.48
+sqlparse==0.5.5
+typing_extensions==4.15.0
+xlsxwriter==3.2.9

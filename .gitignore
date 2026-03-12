@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+
+# Environment files
+.env
+
+# Data files
+*.csv
+
+# Logs
+*.log
+
+# Archive folder
+archive/
+
+# Mac system files
+.DS_Store

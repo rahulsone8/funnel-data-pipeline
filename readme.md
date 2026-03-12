@@ -33,3 +33,48 @@ logs/
 ## Run Pipeline
 
 python3 scripts/pipeline.py
+
+
+
+
+
+--------------------------------------------
+
+# Funnel Data Pipeline
+
+This project builds an incremental ETL pipeline for a food ordering platform.
+
+## Architecture
+
+CSV → Python ETL → MySQL → Tableau Dashboard
+
+## Features
+
+- Incremental data loading
+- Data cleaning with Pandas
+- MySQL storage
+- Tableau analytics dashboard
+
+## Tech Stack
+
+Python  
+Pandas  
+MySQL  
+Tableau  
+
+## Project Structure
+
+funnel_pipeline
+│
+├── scripts
+│   └── pipeline.py
+│
+├── data
+│   ├── raw
+│   ├── processed
+│   └── archive
+│
+├── logs
+│
+├── requirements.txt
+└── README.md
